@@ -1,0 +1,49 @@
+# 🌀 CircleCI Kubernetes Container Runner Setup
+
+This repository provides a complete setup to deploy a **CircleCI container runner** within your **Kubernetes cluster** using **Helm**. It enables your CircleCI jobs to run on your own infrastructure instead of CircleCI’s cloud environment.
+
+---
+
+## 🚀 Key Features
+
+- Run CircleCI pipelines in your private Kubernetes cluster
+- Fully managed via Helm and Kubernetes manifests
+- Uses the `docker` executor for job execution
+- Ideal for self-hosted or hybrid CI/CD environments
+
+---
+
+## 📋 Prerequisites
+
+Before getting started, ensure you have:
+
+- A working Kubernetes cluster (e.g. Docker Desktop, Minikube, EKS, AKS, GKE)
+- Helm 3 installed and configured (`helm version`)
+- kubectl configured to communicate with your cluster (`kubectl get nodes`)
+- A GitHub repository connected to CircleCI
+- CircleCI account with **admin** permissions to manage runners
+
+---
+
+## 🔧 Setup Guide
+
+### 🔹 Step 1: Create a Resource Class in CircleCI
+
+1. Visit the [CircleCI Web Console](https://app.circleci.com)
+2. Navigate to **Organization Settings → Runners**
+3. Click **Create Resource Class**
+4. Give it a name (e.g., `default`)
+5. Copy the **generated runner token** – you’ll use this in the next step
+
+---
+
+### 🔹 Step 2: Deploy the Runner Using Helm
+
+```bash
+helm repo add container-agent https://packagecloud.io/circleci/container-agent/helm
+helm repo update
+
+helm install container-agent container-agent/container-agent \
+  --namespace circleci \
+  --create-namespace \
+  --set agent.resourceClasses.default.token=YOUR_RUNNER_TOKEN

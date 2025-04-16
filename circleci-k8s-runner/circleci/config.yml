@@ -1,0 +1,15 @@
+version: 2.1
+
+jobs:
+  test-runner:
+    docker:
+      - image: cimg/base:stable
+    resource_class: random/default  # This must match your CircleCI UI
+    steps:
+      - checkout
+      - run: echo "Hello from Kubernetes CircleCI runner!"
+
+workflows:
+  test:
+    jobs:
+      - test-runner

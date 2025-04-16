@@ -1,0 +1,20 @@
+runnerToken: YOUR_RUNNER_TOKEN
+
+replicaCount: 1
+
+podLabels:
+  role: circleci-runner
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "250m"
+    memory: "256Mi"
+
+rbac:
+  create: true
+
+image:
+  tag: "latest"
