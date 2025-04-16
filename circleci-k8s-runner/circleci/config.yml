@@ -1,15 +1,53 @@
 version: 2.1
 
 jobs:
-  test-runner:
+  build-basic:
     docker:
-      - image: cimg/base:stable
-    resource_class: random/default  # This must match your CircleCI UI
+      - image: cimg/python:3.10
+    working_directory: ~/project/basic-flask-app
     steps:
       - checkout
-      - run: echo "Hello from Kubernetes CircleCI runner!"
+      - run:
+          name: Install dependencies
+          command: |
+            cd basic-flask-app
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+      - run:
+          name: Run Flask App (basic)
+          command: |
+            cd basic-flask-app
+            . venv/bin/activate
+            python app/main.py &
+            sleep 5
+            curl -f http://localhost:8080
+
+  build-dynamic:
+    docker:
+      - image: cimg/python:3.10
+    working_directory: ~/project/dynamic-flask-app
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            cd dynamic-flask-app
+            python -m venv venv
+            . venv/bin/activate
+            pip install -r requirements.txt
+      - run:
+          name: Run Flask App (dynamic)
+          command: |
+            cd dynamic-flask-app
+            . venv/bin/activate
+            python app/main.py &
+            sleep 5
+            curl --fail --data "name=CircleCI" http://localhost:8080/greet | grep "Hello, CircleCI"
 
 workflows:
-  test:
+  version: 2
+  test-both-apps:
     jobs:
-      - test-runner
+      - build-basic
+      - build-dynamic
